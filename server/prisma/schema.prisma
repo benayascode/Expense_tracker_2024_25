@@ -1,0 +1,28 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String    @id @default(cuid()) @db.Char(36)
+  email     String    @unique
+  password  String
+  name      String
+  username  String    @unique
+  role      String    @default("USER")
+  expenses  Expense[] @relation("UserExpenses")
+}
+
+model Expense {
+  id        String   @id @default(cuid()) @db.Char(36)
+  title     String
+  amount    Float
+  date      DateTime @default(now())
+  category  String
+  userId    String   @db.Char(36)
+  user      User     @relation(fields: [userId], references: [id], name: "UserExpenses")
+}
